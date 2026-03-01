@@ -163,29 +163,44 @@ class AttackerHuman:
 
 
 class AttackerMouse:
+    """マウス座標は表示スケール時は画面ピクセルで返るため、ゲーム座標に変換する。"""
+
     def __init__(self):
         self.waves = []
         self.shot_cooldown = 0
         self.cooldown_time = 36
 
+    @staticmethod
+    def _mouse_game_coords():
+        """Pyxelのマウスをゲーム座標(0..width-1, 0..height-1)に変換する。"""
+        mx, my = pyxel.mouse_x, pyxel.mouse_y
+        w, h = pyxel.width, pyxel.height
+        if mx >= w or my >= h:
+            scale_x = max(1, (mx + w - 1) // w) if mx >= w else 1
+            scale_y = max(1, (my + h - 1) // h) if my >= h else 1
+            scale = max(scale_x, scale_y)
+            mx = mx // scale
+            my = my // scale
+        return max(0, min(w - 1, mx)), max(0, min(h - 1, my))
+
     def update(self, target_x, target_y, safe_zone_radius):
         if self.shot_cooldown > 0:
             self.shot_cooldown -= 1
+        mx, my = self._mouse_game_coords()
         if pyxel.btnp(pyxel.MOUSE_BUTTON_LEFT) and self.shot_cooldown == 0:
-            mx = max(2, min(pyxel.width - 3, pyxel.mouse_x))
-            my = max(2, min(pyxel.height - 3, pyxel.mouse_y))
-            dist_to_player = math.sqrt((mx - target_x) ** 2 + (my - target_y) ** 2)
+            mx_clamp = max(2, min(pyxel.width - 3, mx))
+            my_clamp = max(2, min(pyxel.height - 3, my))
+            dist_to_player = math.sqrt((mx_clamp - target_x) ** 2 + (my_clamp - target_y) ** 2)
             if dist_to_player >= safe_zone_radius:
                 is_critical = random.random() < 0.12
-                self.waves.append(Wave(mx, my, is_critical=is_critical))
+                self.waves.append(Wave(mx_clamp, my_clamp, is_critical=is_critical))
                 self.shot_cooldown = self.cooldown_time
         for w in self.waves:
             w.update()
         self.waves = [w for w in self.waves if w.alive]
 
     def draw(self):
-        mx = max(0, min(pyxel.width, pyxel.mouse_x))
-        my = max(0, min(pyxel.height, pyxel.mouse_y))
+        mx, my = self._mouse_game_coords()
         color = 7 if self.shot_cooldown == 0 else 2
         pyxel.line(mx - 4, my, mx + 4, my, color)
         pyxel.line(mx, my - 4, mx, my + 4, color)
