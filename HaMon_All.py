@@ -278,10 +278,10 @@ class App:
         self.state = "MENU"
         self.selected_index = 0
         self.modes = [
-            "1P VS CPU",
-            "2P VS HUMAN",
-            "1P CLICK ATTACK",
-            "2P VERSUS",
+            "MODE 1: VS CPU",
+            "MODE 2: VS HUMAN",
+            "MODE 3: CLICK ATTACK",
+            "MODE 4: VERSUS",
         ]
         self.time_limit = 30 * 30
         self.time_limit_versus = 30 * 60
