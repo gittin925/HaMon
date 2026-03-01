@@ -1,5 +1,5 @@
 import pyxel
-import HaMon
+import HaMon_PVP
 import HaMon_Auto
 
 # ここではHaMon.pyとHaMon_Auto.pyのAppクラスが、
@@ -37,7 +37,7 @@ class Menu:
             HaMon_Auto.App() # 実装済みのAppクラスを呼び出す
         else:
             print("二人モードを起動します")
-            HaMon.App() # 実装済みのAppクラスを呼び出す
+            HaMon_PVP.App() # 実装済みのAppクラスを呼び出す
         
         # 注意：Pyxelの仕様上、pyxel.runは一度しか呼べないため、
         # 実際にはAppクラスの中で「状態(state)」を切り替えて描画内容を変えるのが一般的です。
